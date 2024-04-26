@@ -63,6 +63,7 @@ public class GameUI
                 else if (choice==7)
                 {
                     // provide code here
+                    System.out.println(tr);
                 }
                 else if (choice==8)
                 {

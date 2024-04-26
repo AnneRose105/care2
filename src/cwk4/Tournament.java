@@ -17,7 +17,10 @@ import cwk4.ChallengeType;
 public class Tournament implements CARE {
 
     private String vizier;
-
+    private int Treasury;
+    private boolean defeated = false;
+    private List<Champion> champions;
+    private List<Challenge> challenges;
 
 //**************** CARE ************************** 
 
@@ -27,8 +30,8 @@ public class Tournament implements CARE {
      * @param viz the name of the vizier
      */
     public Tournament(String viz) {
-
-
+        vizier = viz;
+        Treasury = 1000;
         setupChampions();
         setupChallenges();
     }
@@ -61,7 +64,15 @@ public class Tournament implements CARE {
      * team,(or, "No champions" if team is empty)
      **/
     public String toString() {
-        String s = "\nVizier: " + vizier;
+        String s = "\nVizier: " + vizier + "\n";
+        s += "Treasury: " + Treasury + "\n";
+        s += "Defeated: " + (isDefeated() ? "Yes" : "No") + "\n";
+        s += "Champions in Team: \n";
+        if (getTeam().isEmpty()) {
+            s += "No champions entered";
+        } else {
+            s += getTeam();
+        }
 
         return s;
     }
@@ -75,6 +86,8 @@ public class Tournament implements CARE {
      * champions which can be retired.
      */
     public boolean isDefeated() {
+//        if ((Treasury <= 0) && ())
+
         return false;
     }
 
@@ -94,9 +107,14 @@ public class Tournament implements CARE {
      * @return a String representation of all champions in the reserves
      **/
     public String getReserve() {
-        String s = "************ Champions available in reserves********";
+        String s = "************ Champions available in reserves********\n";
+        for (Champion champion : champions) {
+            s += champion + "\n";
+            s += "******************************\n";
+        }
 
         return s;
+
     }
 
 
@@ -107,7 +125,18 @@ public class Tournament implements CARE {
      * @return details of the champion with the given name
      **/
     public String getChampionDetails(String nme) {
+// Convert the input parameter to lowercase
+        String lowercaseName = nme.toLowerCase();
 
+        for (Champion champion : champions) {
+            // Convert the champion name to lowercase for case-insensitive comparison
+            String championName = champion.getName().toLowerCase();
+
+            // Check if the lowercase champion name matches the lowercase input parameter
+            if (championName.equals(lowercaseName)) {
+                return champion.toString();
+            }
+        }
         return "\nNo such champion";
     }
 
@@ -175,9 +204,11 @@ public class Tournament implements CARE {
      * @return a String representation of the champions in the vizier's team
      **/
     public String getTeam() {
-        String s = "************ Vizier's Team of champions********";
-
-
+        String s = "************ Vizier's Team of champions********\n";
+        // Iterate through champions in the team and append their details
+        for (Champion champion : champions) {
+            s += champion.getName() + "\n";
+        }
         return s;
     }
 
@@ -227,7 +258,10 @@ public class Tournament implements CARE {
      **/
     public String getAllChallenges() {
         String s = "\n************ All Challenges ************\n";
-
+        for (Challenge challenge : challenges) {
+            s += challenge + "\n";
+            s += "\n************************\n";
+        }
         return s;
     }
 
@@ -260,7 +294,7 @@ public class Tournament implements CARE {
     //****************** private methods for Task 3 functionality*******************
     //*******************************************************************************
     private void setupChampions() {
-        List<Champion> champions = List.of(
+        champions = List.of(
 
                 new Champion("Ganfrank", 7, true, 400, "transmutation", "sword", false, ChampionType.WIZARD),
 
@@ -291,32 +325,33 @@ public class Tournament implements CARE {
     }
 
     private void setupChallenges() {
-        List<Challenge> challenges = new ArrayList<>();
+        challenges = List.of(
 
-        challenges.add(new Challenge(1, ChallengeType.MAGIC, "Borg", 3, 100));
+                new Challenge(1, ChallengeType.MAGIC, "Borg", 3, 100),
 
-        challenges.add(new Challenge(2, ChallengeType.FIGHT, "Huns", 3, 120));
+                new Challenge(2, ChallengeType.FIGHT, "Huns", 3, 120),
 
-        challenges.add(new Challenge(3, ChallengeType.MYSTERY, "Ferengi", 3, 150));
+                new Challenge(3, ChallengeType.MYSTERY, "Ferengi", 3, 150),
 
-        challenges.add(new Challenge(4, ChallengeType.MAGIC, "Vandal", 9, 200));
+                new Challenge(4, ChallengeType.MAGIC, "Vandal", 9, 200),
 
-        challenges.add(new Challenge(5, ChallengeType.MYSTERY, "Borg", 7, 90));
+                new Challenge(5, ChallengeType.MYSTERY, "Borg", 7, 90),
 
-        challenges.add(new Challenge(6, ChallengeType.FIGHT, "Goth", 8, 45));
+                new Challenge(6, ChallengeType.FIGHT, "Goth", 8, 45),
 
-        challenges.add(new Challenge(7, ChallengeType.MAGIC, "Frank", 10, 200));
+                new Challenge(7, ChallengeType.MAGIC, "Frank", 10, 200),
 
-        challenges.add(new Challenge(8, ChallengeType.FIGHT, "Sith", 10, 170));
+                new Challenge(8, ChallengeType.FIGHT, "Sith", 10, 170),
 
-        challenges.add(new Challenge(9, ChallengeType.MYSTERY, "Cardashian", 9, 300));
+                new Challenge(9, ChallengeType.MYSTERY, "Cardashian", 9, 300),
 
-        challenges.add(new Challenge(10, ChallengeType.FIGHT, "Jute", 2, 300));
+                new Challenge(10, ChallengeType.FIGHT, "Jute", 2, 300),
 
-        challenges.add(new Challenge(11, ChallengeType.MAGIC, "Celt", 2, 250));
+                new Challenge(11, ChallengeType.MAGIC, "Celt", 2, 250),
 
-        challenges.add(new Challenge(12, ChallengeType.MYSTERY, "Celt", 1, 250));
+                new Challenge(12, ChallengeType.MYSTERY, "Celt", 1, 250)
 
+        );
     }
 
     // Possible useful private methods
@@ -367,7 +402,7 @@ public class Tournament implements CARE {
      * @param fname name of file storing requests
      */
     public void saveGame(String fname) {
-        // uses object serialisation 
+        // uses object serialisation
 
     }
 

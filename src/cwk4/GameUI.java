@@ -59,16 +59,16 @@ public class GameUI {
                     }
 
                 } else if (choice == 5) {
-                    // provide code here
-                    // output should be meaningful
                     System.out.println("Enter Challenge number");
                     String ref = (myIn.nextLine()).trim();
                     Integer chalNo = Integer.parseInt(ref.toString());
                     int challengResult = tr.meetChallenge(chalNo);
                     handleChallengeResult(challengResult);
                 } else if (choice == 6) {
-                    // provide code here
-                    // output should be meaningful
+                    System.out.println("Enter Champion name");
+                    String ref = (myIn.nextLine()).trim();
+                    int retireResult = tr.retireChampion(ref);
+                    handleRetireChampionOutput(retireResult, ref);
                 } else if (choice == 7) {
                     // provide code here
                     System.out.println(tr);
@@ -100,27 +100,55 @@ public class GameUI {
     }
 
     public void handleChallengeResult(int result) {
-    switch (result) {
-        case 0:
-            System.out.println("Challenge won by champion. Reward added to the treasury.");
-            break;
-        case 1:
-            System.out.println("Challenge lost on skills. Reward deducted from the treasury and champion disqualified.");
-            break;
-        case 2:
-            System.out.println("Challenge lost as no suitable champion is available. Reward deducted from the treasury.");
-            break;
-        case 3:
-            System.out.println("Challenge lost and vizier completely defeated (no money and no champions to withdraw).");
-            break;
-        case -1:
-            System.out.println("No such challenge.");
-            break;
-        default:
-            System.out.println("Invalid result.");
-            break;
+        switch (result) {
+            case 0:
+                System.out.println("Challenge won by champion. Reward added to the treasury.");
+                break;
+            case 1:
+                System.out.println("Challenge lost on skills. Reward deducted from the treasury and champion disqualified.");
+                break;
+            case 2:
+                System.out.println("Challenge lost as no suitable champion is available. Reward deducted from the treasury.");
+                break;
+            case 3:
+                System.out.println("Challenge lost and vizier completely defeated (no money and no champions to withdraw).");
+                break;
+            case -1:
+                System.out.println("No such challenge.");
+                break;
+            default:
+                System.out.println("Invalid result.");
+                break;
+        }
     }
-}
+
+
+    /**
+     * Handles the output of the retireChampion method by printing necessary output to the console
+     *
+     * @param result the integer result returned by the retireChampion method
+     * @param name   the name of the champion
+     */
+    public void handleRetireChampionOutput(int result, String name) {
+        switch (result) {
+            case 0:
+                System.out.println(name + " has been retired from the vizier's team and moved back to reserves successfully.");
+                break;
+            case 1:
+                System.out.println(name + " cannot be retired because they are disqualified.");
+                break;
+            case 2:
+                System.out.println(name + " is not in the vizier's team, so cannot be retired.");
+                break;
+            case -1:
+                System.out.println("No champion found with the name " + name + ".");
+                break;
+            default:
+                System.out.println("Unexpected result from retireChampion method.");
+                break;
+        }
+    }
+
 
     private int getMenuItem() throws IOException {
         int choice = 100;

@@ -15,6 +15,7 @@ public class Challenge {
         this.reward = reward;
     }
 
+
     public int getRequiredSkillLevel() {
         return requiredSkillLevel;
     }

@@ -20,6 +20,7 @@ public class Tournament implements CARE {
     private int Treasury;
     private boolean defeated = false;
     private List<Champion> champions;
+    private List<Champion> viziersChampions = new ArrayList<>(List.of());
     private List<Challenge> challenges;
 
 //**************** CARE ************************** 
@@ -32,6 +33,7 @@ public class Tournament implements CARE {
     public Tournament(String viz) {
         vizier = viz;
         Treasury = 1000;
+//        viziersChampions = null;
         setupChampions();
         setupChallenges();
     }
@@ -68,7 +70,7 @@ public class Tournament implements CARE {
         s += "Treasury: " + Treasury + "\n";
         s += "Defeated: " + (isDefeated() ? "Yes" : "No") + "\n";
         s += "Champions in Team: \n";
-        if (getTeam().isEmpty()) {
+        if (getTeam() == "No Champions in Vizier's team") {
             s += "No champions entered";
         } else {
             s += getTeam();
@@ -109,8 +111,10 @@ public class Tournament implements CARE {
     public String getReserve() {
         String s = "************ Champions available in reserves********\n";
         for (Champion champion : champions) {
-            s += champion + "\n";
-            s += "******************************\n";
+            if (champion.isInReserve()) {
+                s += champion + "\n";
+                s += "******************************\n";
+            }
         }
 
         return s;
@@ -166,7 +170,68 @@ public class Tournament implements CARE {
      **/
     public int enterChampion(String nme) {
 
-        return -1;
+        // Convert the input parameter to lowercase
+
+        String lowercaseName = nme.toLowerCase();
+
+
+        for (Champion champion : champions) {
+
+            // Convert the champion name to lowercase for case-insensitive comparison
+
+            String championName = champion.getName().toLowerCase();
+
+
+            // Check if the lowercase champion name matches the lowercase input parameter
+
+            if (championName.equals(lowercaseName)) {
+
+                // Check if the champion is in the reserve
+
+                if (champion.isInReserve()) {
+
+                    // Check if there is enough money in the treasury for the entry fee
+
+                    if (Treasury >= champion.getEntryFee()) {
+
+                        // Deduct the entry fee from the treasury
+
+                        Treasury -= champion.getEntryFee();
+
+                        // Set the champion as active
+
+                        champion.setAsEntered();
+
+
+                        // Add the champion to the vizier's team if it's not already in the team
+
+                        if (!viziersChampions.contains(champion)) {
+
+                            viziersChampions.add(champion);
+                            champion.setAsEntered();
+
+                        }
+
+
+                        return 0; // Champion entered successfully
+
+                    } else {
+
+                        return 2; // Not enough money in the treasury
+
+                    }
+
+                } else {
+
+                    return 1; // Champion not in reserve
+
+                }
+
+            }
+
+        }
+
+        return -1; // No such champion
     }
 
     /**
@@ -205,10 +270,18 @@ public class Tournament implements CARE {
      **/
     public String getTeam() {
         String s = "************ Vizier's Team of champions********\n";
-        // Iterate through champions in the team and append their details
-        for (Champion champion : champions) {
-            s += champion.getName() + "\n";
+
+        if (viziersChampions.isEmpty()) {
+            s = "No Champions in Vizier's team";
+        } else {
+            // Iterate through champions in the team and append their details
+            for (Champion champion : champions) {
+                if (champion.isEntered()) {
+                    s += champion.getName() + "\n";
+                }
+            }
         }
+
         return s;
     }
 
@@ -246,7 +319,14 @@ public class Tournament implements CARE {
      * the challenge number
      **/
     public String getChallenge(int num) {
+        for (Challenge challenge : challenges) {
 
+            if (challenge.getNumber() == num) {
+
+                return challenge.toString();
+
+            }
+        }
 
         return "\nNo such challenge";
     }
@@ -284,10 +364,81 @@ public class Tournament implements CARE {
      * @return an int showing the result(as above) of fighting the challenge
      */
     public int meetChallenge(int chalNo) {
-        //Nothing said about accepting challenges when bust
-        int outcome = -1;
+        if (chalNo < 1 || chalNo > challenges.size()) {
+            return -1;
+        } // no such challenge
+
+        Challenge challenge = retreiveChallenge(chalNo);
+
+        List<Champion> eligibleChampions = new ArrayList<>();
+
+
+        for (Champion champion : viziersChampions) {
+
+            if (champion.getChampionType().toString() == challenge.getType().toString()) {
+
+                eligibleChampions.add(champion);
+
+            }
+
+        }
+
+
+        if (eligibleChampions.isEmpty()) {
+
+            return 2; // no suitable champion is available
+
+        }
+
+
+        Collections.sort(eligibleChampions, (c1, c2) -> Integer.compare(c2.getSkillLevel(), c1.getSkillLevel()));
+
+        Champion selectedChampion = eligibleChampions.get(0);
+
+
+        int outcome = 0; // challenge won by champion
+
+        if (Math.random() < 0.5) {
+
+            outcome = 1; // challenge lost on skills
+
+            selectedChampion.setChampionState(ChampionState.DISQUALIFIED);
+
+        }
+
+
+// Check if Treasury value is sufficient before deducting or adding the reward
+
+        if (outcome == 1 || isDefeated()) {
+
+            if (Treasury >= challenge.getReward()) {
+
+                Treasury -= challenge.getReward();
+
+            } else {
+
+                System.out.println("Insufficient Treasury value to meet the challenge.");
+
+                return -2; // not enough money in the treasury
+
+            }
+
+        } else {
+
+            Treasury += challenge.getReward();
+
+        }
 
         return outcome;
+    }
+
+    private Challenge retreiveChallenge(int chalNo) {
+        for (Challenge challenge : challenges){
+            if (challenge.getNumber() == chalNo){
+                return challenge;
+            }
+        }
+        return null;
     }
 
 

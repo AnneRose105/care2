@@ -10,6 +10,7 @@ public class Champion {
     private String weapon;
     private boolean talks;
     private ChampionType championType;
+    private ChampionState championState;
 
     public Champion(String name, int skillLevel, boolean necromancer, int entryFee, String spellSpeciality, String weapon, boolean talks, ChampionType championType) {
         this.name = name;
@@ -20,6 +21,8 @@ public class Champion {
         this.weapon = weapon;
         this.talks = talks;
         this.championType = championType;
+        this.championState = ChampionState.WAITING;
+
     }
 
     @Override
@@ -98,5 +101,45 @@ public class Champion {
 
     public void setChampionType(ChampionType championType) {
         this.championType = championType;
+    }
+
+    public ChampionState getChampionState() {
+        return championState;
+    }
+
+    public void setChampionState(ChampionState championState) {
+        this.championState = championState;
+    }
+
+    public boolean isInReserve() {
+        return championState == ChampionState.WAITING;
+    }
+
+    public boolean isEntered() {
+        return championState == ChampionState.ENTERED;
+    }
+
+    public void setInReserve() {
+
+        this.championState = ChampionState.WAITING;
+
+    }
+
+
+    public void setAsEntered() {
+
+        this.championState = ChampionState.ENTERED;
+
+    }
+
+
+    public void setAsDisqualified() {
+
+        this.championState = ChampionState.DISQUALIFIED;
+
+    }
+
+    public boolean isDisqualified() {
+        return championState == ChampionState.DISQUALIFIED;
     }
 }
